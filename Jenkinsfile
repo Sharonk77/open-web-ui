@@ -6,7 +6,7 @@ pipeline {
          steps {
             sh '''
             echo "Starting to build image..."
-            docker build -t open-web-ui-image https://github.com/open-webui/open-webui
+            docker build -t open-web-ui-image https://github.com/open-webui/open-webui#main
             '''
          }
       }
