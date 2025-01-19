@@ -1,10 +1,6 @@
 pipeline {
    agent any
 
-   environment {
-      //todo: Add any necessary environment variables here, if needed
-   }
-
    stages {
       stage('Clone and Build Docker Image') {
          steps {
