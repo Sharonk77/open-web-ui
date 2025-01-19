@@ -1,6 +1,10 @@
 pipeline {
    agent any
 
+   options {
+      cleanWs() 
+   }
+
    stages {
       stage('Clone and Build Docker Image') {
          steps {
