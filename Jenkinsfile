@@ -1,11 +1,14 @@
 pipeline {
    agent any
 
-   options {
-      cleanWs() 
-   }
-
    stages {
+      stage('Clean Workspace') {
+         steps {
+            script {
+                  deleteDir()
+                }
+            }
+                 
       stage('Clone and Build Docker Image') {
          steps {
             sh '''
