@@ -8,6 +8,7 @@ pipeline {
                   deleteDir()
                 }
             }
+      }
                  
       stage('Clone and Build Docker Image') {
          steps {
