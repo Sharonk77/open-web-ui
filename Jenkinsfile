@@ -5,8 +5,11 @@ pipeline {
       stage('Clone and Build Docker Image') {
          steps {
             sh '''
+            echo pwd
             echo "Starting to build image..."
-            docker build -t open-web-ui-image https://github.com/open-webui/open-webui#main
+            git clone https://github.com/open-webui/open-webui
+            cd open-webui
+            docker build -t open-web-ui-image .
             '''
          }
       }
