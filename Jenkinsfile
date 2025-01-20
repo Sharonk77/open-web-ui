@@ -49,7 +49,7 @@ pipeline {
             steps {
                 script {
                     withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
-                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-jenkins-cred') {
+                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'aws-jenkins-cred') {
                             sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}"
                         }
                     }
