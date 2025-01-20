@@ -19,8 +19,8 @@ pipeline {
             steps {
                 script {
                     withCredentials([
-                        string(credentialsId: 'aws-region', variable: 'AWS_REGION'),
-                        string(credentialsId: 'ecr-repo', variable: 'ECR_REPO')
+                        string(credentialsId: 'AWS_REGION', variable: 'AWS_REGION'),
+                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
                     ]) {
                         sh '''
                         echo "Logging in to Amazon ECR..."
