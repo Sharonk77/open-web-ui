@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([
-                        string(credentialsId: 'ECR-REPO', variable: 'ECR_REPO')
+                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
                     ]) {
                         sh '''
                             echo "Tagging Docker image..."
@@ -47,7 +47,7 @@ pipeline {
                 script {
                     withAWS(credentials: 'aws-credentials-id', region: "${AWS_REGION}") {
                         docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-credentials-id') {
-                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}"
                         }
                     }
                 }
