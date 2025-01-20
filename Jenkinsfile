@@ -5,6 +5,7 @@ pipeline {
         IMAGE_NAME = 'test1'
         IMAGE_TAG = 'latest'
         AWS_REGION = credentials('AWS_REGION')
+        AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
 
     }
 
