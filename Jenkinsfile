@@ -47,7 +47,7 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    withAWS(credentials: 'jenkins-ecr-user', region: "${AWS_REGION}") {
+                    withAWS(credentials: 'c848aeb9-708d-47af-9160-9b96aafe6a3a', region: "${AWS_REGION}") {
                         docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-credentials-id') {
                             sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}"
                         }
