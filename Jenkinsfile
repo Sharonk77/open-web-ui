@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'open-web-ui/openweb'
+        IMAGE_NAME = 'test1'
         IMAGE_TAG = 'latest'
     }
 
@@ -15,22 +15,6 @@ pipeline {
             }
         }
 
-        stage('Login to AWS ECR') {
-            steps {
-                script {
-                    withCredentials([
-                        string(credentialsId: 'AWS_REGION', variable: 'AWS_REGION'),
-                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
-                    ]) {
-                        sh '''
-                        echo "Logging in to Amazon ECR..."
-                        aws ecr get-login-password --region $AWS_REGION | \
-                        docker login --username AWS --password-stdin $ECR_REPO
-                        '''
-                    }
-                }
-            }
-        }
 
         stage('Clone and Build Docker Image') {
             steps {
@@ -48,7 +32,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([
-                        string(credentialsId: 'ecr-repo', variable: 'ECR_REPO')
+                        string(credentialsId: 'ECR-REPO', variable: 'ECR_REPO')
                     ]) {
                         sh '''
                         echo "Tagging Docker image..."
@@ -62,34 +46,16 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    withCredentials([
-                        string(credentialsId: 'ecr-repo', variable: 'ECR_REPO')
-                    ]) {
-                        sh '''
-                        echo "Pushing Docker image to Amazon ECR..."
-                        docker push $ECR_REPO:$IMAGE_TAG
-                        '''
+                withAWS(credentials: 'aws-credentials-id', region: "${AWS_REGION}") {
+                                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-credentials-id') {
+//                                             sh "docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+                                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+
                     }
                 }
             }
         }
 
-        stage('Cleanup Docker Images') {
-            steps {
-                script {
-                    withCredentials([
-                        string(credentialsId: 'ecr-repo', variable: 'ECR_REPO')
-                    ]) {
-                        sh '''
-                        echo "Cleaning up local Docker images..."
-                        docker rmi $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
-                        docker logout $ECR_REPO
-                        '''
-                    }
-                }
-            }
-        }
-    }
 
     post {
         success {
