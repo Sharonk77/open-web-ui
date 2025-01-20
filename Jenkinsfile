@@ -15,15 +15,14 @@ pipeline {
             }
         }
 
-
         stage('Clone and Build Docker Image') {
             steps {
                 sh '''
-                echo "Cloning repository..."
-                git clone https://github.com/open-webui/open-webui
-                cd open-webui
-                echo "Building Docker image..."
-                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                    echo "Cloning repository..."
+                    git clone https://github.com/open-webui/open-webui
+                    cd open-webui
+                    echo "Building Docker image..."
+                    docker build -t $IMAGE_NAME:$IMAGE_TAG .
                 '''
             }
         }
@@ -35,8 +34,8 @@ pipeline {
                         string(credentialsId: 'ECR-REPO', variable: 'ECR_REPO')
                     ]) {
                         sh '''
-                        echo "Tagging Docker image..."
-                        docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
+                            echo "Tagging Docker image..."
+                            docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
                         '''
                     }
                 }
@@ -46,16 +45,15 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                withAWS(credentials: 'aws-credentials-id', region: "${AWS_REGION}") {
-                                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-credentials-id') {
-//                                             sh "docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
-                                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
-
+                    withAWS(credentials: 'aws-credentials-id', region: "${AWS_REGION}") {
+                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", 'ecr:aws-credentials-id') {
+                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+                        }
                     }
                 }
             }
         }
-
+    }
 
     post {
         success {
