@@ -2,10 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'test1'
-        IMAGE_TAG = 'latest'
+        IMAGE_NAME = credentials('IMAGE_NAME')
+        IMAGE_TAG = credentials('IMAGE_TAG')
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
+        ECR_REPO = credentials('ECR_REPO')
     }
 
     stages {
@@ -24,7 +25,7 @@ pipeline {
                     git clone https://github.com/open-webui/open-webui
                     cd open-webui
                     echo "Building Docker image..."
-                    docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                    docker build -t $IMAGE_NAME .
                 '''
             }
         }
@@ -36,6 +37,7 @@ pipeline {
                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
                     ]) {
                         sh '''
+                            echo "Current directory:" $(pwd)
                             echo "Tagging Docker image..."
                             docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
                         '''
@@ -51,9 +53,9 @@ pipeline {
                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
                 ]) {
 
-                    withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
-                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
-                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}"
+                    withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1' ) {
+                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
+                            sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}"
                         }
                     }
                 }
