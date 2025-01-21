@@ -9,14 +9,14 @@ pipeline {
         ECR_REPO = credentials('ECR_REPO')
     }
 
-    stages {
-        stage('Clean Workspace') {
-            steps {
-                script {
-                    deleteDir()
-                }
-            }
-        }
+//     stages {
+//         stage('Clean Workspace') {
+//             steps {
+//                 script {
+//                     deleteDir()
+//                 }
+//             }
+//         }
 
         stage('Clone and Build Docker Image') {
             steps {
