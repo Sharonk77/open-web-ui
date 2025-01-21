@@ -9,7 +9,7 @@ pipeline {
         ECR_REPO = credentials('ECR_REPO')
     }
 
-//     stages {
+    stages {
 //         stage('Clean Workspace') {
 //             steps {
 //                 script {
