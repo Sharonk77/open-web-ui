@@ -10,13 +10,13 @@ pipeline {
     }
 
     stages {
-//         stage('Clean Workspace') {
-//             steps {
-//                 script {
-//                     deleteDir()
-//                 }
-//             }
-//         }
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    deleteDir()
+                }
+            }
+        }
 
         stage('Clone and Build Docker Image') {
             steps {
