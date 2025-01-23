@@ -64,7 +64,6 @@ pipeline {
 //             }
 //         }
 
-
         stage('Replace Variables in Deployment File') {
             steps {
                 script {
@@ -87,21 +86,20 @@ pipeline {
         stage('Deploy to Kubernetes from ECR') {
             steps {
                 script {
-                                sh """
-                                    echo "Creating Kubernetes secret for ECR authentication..."
-                                    kubectl create secret docker-registry ecr-secret \
-                                        --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
-                                        --docker-username=AWS \
-                                        --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
-                                        --namespace default --dry-run=client -o yaml | kubectl apply -f -
+                    sh """
+                        echo "Creating Kubernetes secret for ECR authentication..."
+                        kubectl create secret docker-registry ecr-secret \
+                            --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
+                            --docker-username=AWS \
+                            --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
+                            --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
-                                    echo "Deploying to Kubernetes..."
-                                    kubectl apply -f open-web-ui-deployment.yaml
-                                """
-                            }
-                        }
-                    }
-
+                        echo "Deploying to Kubernetes..."
+                        kubectl apply -f open-web-ui-deployment.yaml
+                    """
+                }
+            }
+        }
 
 //         stage('Build k8s from ECR image') {
 //             steps {
@@ -115,9 +113,9 @@ pipeline {
 //                             }
 //                         }
 //                     }
-                }
-            }
-        }
+//                 }
+//             }
+//         }
     }
 
     post {
