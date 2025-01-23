@@ -91,7 +91,7 @@ pipeline {
                         kubectl create secret docker-registry ecr-secret \
                             --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
                             --docker-username=AWS \
-                            --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
+                            --docker-password=(aws ecr get-login-password --region ${AWS_REGION}) \
                             --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
                         echo "Deploying to Kubernetes..."
