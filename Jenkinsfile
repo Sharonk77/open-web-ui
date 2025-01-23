@@ -61,6 +61,28 @@ pipeline {
 //                 }
 //             }
 
+        stages {
+        stage('Replace Variables in Deployment File') {
+            steps {
+                script {
+                    def deploymentFile = 'deployment.yaml'
+
+                    // Replace placeholders with Jenkins credentials securely
+                    sh """
+                        sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
+                               -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
+                               -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
+                               -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
+                               open-web-ui-deployment.yaml
+
+                    """
+
+                    echo "Deployment file updated with credentials."
+                    }
+                }
+            }
+        }
+
         stage('build k8s from ecr image') {
             steps {
                 script {
