@@ -106,3 +106,4 @@ pipeline {
             echo "Failed to push Docker image to AWS ECR."
         }
     }
+}
