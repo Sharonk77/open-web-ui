@@ -64,6 +64,7 @@ pipeline {
 //             }
 //         }
 
+
         stage('Replace Variables in Deployment File') {
             steps {
                 script {
@@ -83,7 +84,7 @@ pipeline {
             }
         }
 
-        stage('Build k8s from ECR image') {
+        stage('Deploy to Kubernetes from ECR') {
             steps {
                 script {
                     withCredentials([
@@ -91,10 +92,34 @@ pipeline {
                     ]) {
                         withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
                             docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
-                                sh "kubectl apply -f open-web-ui-deployment.yaml"
+                                sh """
+                                    echo "Creating Kubernetes secret for ECR authentication..."
+                                    kubectl create secret docker-registry ecr-secret \
+                                        --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com \
+                                        --docker-username=AWS \
+                                        --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
+                                        --namespace default --dry-run=client -o yaml | kubectl apply -f -
+
+                                    echo "Deploying to Kubernetes..."
+                                    kubectl apply -f open-web-ui-deployment.yaml
+                                """
                             }
                         }
                     }
+
+
+//         stage('Build k8s from ECR image') {
+//             steps {
+//                 script {
+//                     withCredentials([
+//                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
+//                     ]) {
+//                         withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
+//                             docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
+//                                 sh "kubectl apply -f open-web-ui-deployment.yaml"
+//                             }
+//                         }
+//                     }
                 }
             }
         }
