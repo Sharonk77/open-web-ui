@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: openwebui-pod
+spec:
+  containers:
+    - name: openwebui-pod
+      image: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<IMAGE_NAME>:<IMAGE_TAG>
+      ports:
+        - containerPort: 80
+#  imagePullSecrets:
+#    - name: ecr-secret
