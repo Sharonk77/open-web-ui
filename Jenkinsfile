@@ -87,11 +87,6 @@ pipeline {
         stage('Deploy to Kubernetes from ECR') {
             steps {
                 script {
-                    withCredentials([
-                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
-                    ]) {
-                        withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
-                            docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
                                 sh """
                                     echo "Creating Kubernetes secret for ECR authentication..."
                                     kubectl create secret docker-registry ecr-secret \
