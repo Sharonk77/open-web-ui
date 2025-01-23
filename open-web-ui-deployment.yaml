@@ -8,5 +8,5 @@ spec:
       image: {{AWS_ACCOUNT_ID}}.dkr.ecr.{{AWS_REGION}}.amazonaws.com/{{IMAGE_NAME}}:{{IMAGE_TAG}}
       ports:
         - containerPort: 80
-#  imagePullSecrets:
-#    - name: ecr-secret
+  imagePullSecrets:
+    - name: ecr-secret
