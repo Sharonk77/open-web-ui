@@ -67,8 +67,6 @@ pipeline {
     post {
         success {
             echo "Docker image successfully pushed to AWS ECR!"
-//             echo "triggering job: 'build-open-web-ui'"
-//             build job: 'build-open-web-ui', wait: false
         }
         failure {
             echo "Failed to push Docker image to AWS ECR."
