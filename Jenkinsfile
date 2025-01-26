@@ -27,7 +27,7 @@ pipeline {
                     git clone https://github.com/open-webui/open-webui
                     cd open-webui
                     echo "Building Docker image..."
-                    docker build -t $IMAGE_NAME .
+                    docker build -t $IMAGE_NAME:$IMAGE_TAG .
                 '''
             }
         }
