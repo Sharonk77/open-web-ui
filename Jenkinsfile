@@ -74,9 +74,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    echo "installing ngnix ingress controller"
-                    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-                    kubectl get pods -n ingress-nginx
                     echo "Cloning repository..."
                     git clone https://github.com/Sharonk77/open-web-ui/
                     cd open-web-ui
@@ -88,8 +85,6 @@ pipeline {
                            -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
                            open-web-ui-deployment.yaml
                     kubectl apply --validate=false -f open-web-ui-deployment.yaml
-                    kubectl apply --validate=false -f openweb-service.yaml
-                    kubectl apply --validate=false -f ingress-resource.yaml
 
                     '''
                 }
