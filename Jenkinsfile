@@ -20,18 +20,18 @@ pipeline {
 //             }
 //         }
 //
-//         stage('Clone and Build Docker Image') {
-//             steps {
-//                 sh '''
-//                     echo "Cloning repository..."
+        stage('Clone and Build Docker Image') {
+            steps {
+                sh '''
+                    echo "Cloning repository..."
 //                     git clone https://github.com/open-webui/open-webui
-//                     cd open-webui
-//                     git checkout $IMAGE_TAG
-//                     echo "Building Docker image..."
-//                     docker build -t $IMAGE_NAME:$IMAGE_TAG .
-//                 '''
-//             }
-//         }
+                    cd open-webui
+                    git checkout $IMAGE_TAG
+                    echo "Building Docker image..."
+                    docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                '''
+            }
+        }
 
         stage('Tag Docker Image') {
             steps {
