@@ -25,6 +25,7 @@ pipeline {
                 sh '''
                     echo "Cloning repository..."
                     git clone https://github.com/open-webui/open-webui
+                    git checkout $IMAGE_TAG
                     cd open-webui
                     echo "Building Docker image..."
                     docker build -t $IMAGE_NAME:$IMAGE_TAG .
@@ -72,7 +73,10 @@ pipeline {
             steps {
                 script {
                     sh """
-                        pwd
+                        echo "Cloning repository..."
+                        git clone https://github.com/Sharonk77/open-web-ui/
+                        cd open-web-ui
+                        echo "Current directory:" $(pwd)
                         sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
                                -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
                                -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
