@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = credentials('IMAGE_NAME')
-//         IMAGE_TAG = credentials('IMAGE_TAG')
-        IMAGE_TAG = 'v0.5.2'
+        IMAGE_TAG = credentials('IMAGE_TAG')
+//         IMAGE_TAG = 'v0.5.2'
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         ECR_REPO = credentials('ECR_REPO')
@@ -83,8 +83,8 @@ pipeline {
                                -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
                                open-web-ui-deployment.yaml
 
-                        kubectl apply -f open-web-ui-deployment.yaml
-                        kubectl set image deployment/my-deployment mycontainer=myimage:latest
+                        kubectl apply --validate=false -f open-web-ui-deployment.yaml
+//                         kubectl set image deployment/my-deployment mycontainer=myimage:latest
 
                     '''
                     echo "Deployment file updated with credentials."
