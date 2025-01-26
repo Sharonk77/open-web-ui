@@ -11,41 +11,41 @@ pipeline {
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                script {
-                    deleteDir()
-                }
-            }
-        }
+//         stage('Clean Workspace') {
+//             steps {
+//                 script {
+//                     deleteDir()
+//                 }
+//             }
+//         }
 
-        stage('Clone and Build Docker Image') {
-            steps {
-                sh '''
-                    echo "Cloning repository..."
-                    git clone https://github.com/open-webui/open-webui
-                    cd open-webui
-                    echo "Building Docker image..."
-                    docker build -t $IMAGE_NAME .
-                '''
-            }
-        }
+//         stage('Clone and Build Docker Image') {
+//             steps {
+//                 sh '''
+//                     echo "Cloning repository..."
+//                     git clone https://github.com/open-webui/open-webui
+//                     cd open-webui
+//                     echo "Building Docker image..."
+//                     docker build -t $IMAGE_NAME .
+//                 '''
+//             }
+//         }
 
-        stage('Tag Docker Image') {
-            steps {
-                script {
-                    withCredentials([
-                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
-                    ]) {
-                        sh '''
-                            echo "Current directory:" $(pwd)
-                            echo "Tagging Docker image..."
-                            docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
-                        '''
-                    }
-                }
-            }
-        }
+//         stage('Tag Docker Image') {
+//             steps {
+//                 script {
+//                     withCredentials([
+//                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
+//                     ]) {
+//                         sh '''
+//                             echo "Current directory:" $(pwd)
+//                             echo "Tagging Docker image..."
+//                             docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REPO:$IMAGE_TAG
+//                         '''
+//                     }
+//                 }
+//             }
+//         }
 
         stage('Push Docker Image to ECR') {
             steps {
