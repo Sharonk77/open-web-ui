@@ -78,7 +78,7 @@ pipeline {
                                -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
                                open-web-ui-deployment.yaml
 
-                               kubectl apply -f open-web-ui-deployment.yaml
+                        kubectl apply -f open-web-ui-deployment.yaml
                     """
                     echo "Deployment file updated with credentials."
                 }
