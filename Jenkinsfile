@@ -72,7 +72,7 @@ pipeline {
         stage('Replace Variables in Deployment File') {
             steps {
                 script {
-                    sh """
+                    sh '''
                         echo "Cloning repository..."
                         git clone https://github.com/Sharonk77/open-web-ui/
                         cd open-web-ui
@@ -86,7 +86,7 @@ pipeline {
                         kubectl apply -f open-web-ui-deployment.yaml
                         kubectl set image deployment/my-deployment mycontainer=myimage:latest
 
-                    """
+                    '''
                     echo "Deployment file updated with credentials."
                 }
             }
