@@ -3,7 +3,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = credentials('IMAGE_NAME')
-        IMAGE_TAG = credentials('IMAGE_TAG')
+//         IMAGE_TAG = credentials('IMAGE_TAG')
+        IMAGE_TAG = '02'
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         ECR_REPO = credentials('ECR_REPO')
@@ -19,17 +20,17 @@ pipeline {
 //             }
 //         }
 
-//         stage('Clone and Build Docker Image') {
-//             steps {
-//                 sh '''
+        stage('Clone and Build Docker Image') {
+            steps {
+                sh '''
 //                     echo "Cloning repository..."
 //                     git clone https://github.com/open-webui/open-webui
-//                     cd open-webui
-//                     echo "Building Docker image..."
-//                     docker build -t $IMAGE_NAME .
-//                 '''
-//             }
-//         }
+                    cd open-webui
+                    echo "Building Docker image..."
+                    docker build -t $IMAGE_NAME .
+                '''
+            }
+        }
 
 //         stage('Tag Docker Image') {
 //             steps {
