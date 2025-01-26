@@ -69,21 +69,19 @@ pipeline {
                 script {
                     def deploymentFile = 'deployment.yaml'
 
-                        sh """
-                            sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
-                                   -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
-                                   -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
-                                   -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
-                                   open-web-ui-deployment.yaml
-                        """
-                        echo "Deployment file updated with credentials."
-                    }
+                    sh """
+                        sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
+                               -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
+                               -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
+                               -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
+                               open-web-ui-deployment.yaml
+                    """
+                    echo "Deployment file updated with credentials."
                 }
             }
+        }
 
-
-
-            stage('Deploy to Kubernetes from ECR') {
+        stage('Deploy to Kubernetes from ECR') {
             steps {
                 script {
                     withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
@@ -105,7 +103,6 @@ pipeline {
             }
         }
 
-
 //         stage('Build k8s from ECR image') {
 //             steps {
 //                 script {
@@ -121,7 +118,7 @@ pipeline {
 //                 }
 //             }
 //         }
-//     }
+    }
 
     post {
         success {
