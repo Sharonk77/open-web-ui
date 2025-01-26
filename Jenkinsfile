@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = credentials('IMAGE_NAME')
 //         IMAGE_TAG = credentials('IMAGE_TAG')
-        IMAGE_TAG = 'v0.5.2'
+        IMAGE_TAG = 'v0.5.3'
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         ECR_REPO = credentials('ECR_REPO')
@@ -12,26 +12,26 @@ pipeline {
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                script {
-                    deleteDir()
-                }
-            }
-        }
-
-        stage('Clone and Build Docker Image') {
-            steps {
-                sh '''
-                    echo "Cloning repository..."
-                    git clone https://github.com/open-webui/open-webui
-                    cd open-webui
-                    git checkout $IMAGE_TAG
-                    echo "Building Docker image..."
-                    docker build -t $IMAGE_NAME:$IMAGE_TAG .
-                '''
-            }
-        }
+//         stage('Clean Workspace') {
+//             steps {
+//                 script {
+//                     deleteDir()
+//                 }
+//             }
+//         }
+//
+//         stage('Clone and Build Docker Image') {
+//             steps {
+//                 sh '''
+//                     echo "Cloning repository..."
+//                     git clone https://github.com/open-webui/open-webui
+//                     cd open-webui
+//                     git checkout $IMAGE_TAG
+//                     echo "Building Docker image..."
+//                     docker build -t $IMAGE_NAME:$IMAGE_TAG .
+//                 '''
+//             }
+//         }
 
         stage('Tag Docker Image') {
             steps {
@@ -74,17 +74,17 @@ pipeline {
                 script {
                     sh '''
                         echo "Cloning repository..."
-                        git clone https://github.com/Sharonk77/open-web-ui/
+//                         git clone https://github.com/Sharonk77/open-web-ui/
                         cd open-web-ui
-                        echo "Current directory:" $(pwd)
-                        sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
-                               -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
-                               -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
-                               -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
-                               open-web-ui-deployment.yaml
+//                         echo "Current directory:" $(pwd)
+//                         sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
+//                                -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
+//                                -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
+//                                -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
+//                                open-web-ui-deployment.yaml
 
-                        kubectl apply --validate=false -f open-web-ui-deployment.yaml
-//                         kubectl set image deployment/my-deployment mycontainer=myimage:latest
+//                         kubectl apply --validate=false -f open-web-ui-deployment.yaml
+                        kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
 
                     '''
                     echo "Deployment file updated with credentials."
