@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'amazon/aws-cli'
+        }
+    }
 
     environment {
         IMAGE_NAME = credentials('IMAGE_NAME')
