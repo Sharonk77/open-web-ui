@@ -32,16 +32,6 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                sh '''
-                    cd open-webui
-                    echo "Building Docker image..."
-                    docker build -t $IMAGE_NAME .
-                '''
-            }
-        }
-
         stage('Tag Docker Image') {
             steps {
                 script {
