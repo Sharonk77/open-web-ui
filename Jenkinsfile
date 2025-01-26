@@ -75,10 +75,8 @@ pipeline {
                 script {
                     sh '''
                     echo "installing ngnix ingress controller"
-                    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-                    helm repo update
-                    helm install my-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
-                    kubectl get all -n ingress-nginx
+                    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+                    kubectl get pods -n ingress-nginx
                     echo "Cloning repository..."
                     git clone https://github.com/Sharonk77/open-web-ui/
                     cd open-web-ui
