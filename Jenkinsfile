@@ -69,7 +69,7 @@ pipeline {
                 script {
                     def deploymentFile = 'deployment.yaml'
 
-                   withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
+                    // Replace placeholders with Jenkins credentials securely
                     sh """
                         sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
                                -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
@@ -79,7 +79,6 @@ pipeline {
                     """
 
                     echo "Deployment file updated with credentials."
-                    }
                 }
             }
         }
