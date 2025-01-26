@@ -12,20 +12,20 @@ pipeline {
 
     stages {
 
-//         stage('Clean Workspace') {
-//             steps {
-//                 script {
-//                     deleteDir()
-//                 }
-//             }
-//         }
-//
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    deleteDir()
+                }
+            }
+        }
+
         stage('Clone and Build Docker Image') {
             steps {
-//              git clone https://github.com/open-webui/open-webui
+
                 sh '''
                     echo "Cloning repository..."
-
+                    git clone https://github.com/open-webui/open-webui
                     cd open-webui
                     git checkout $IMAGE_TAG
                     echo "Building Docker image..."
@@ -74,7 +74,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    cd open-web-ui
                     kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
                     '''
 //                     sh '''
@@ -89,7 +88,7 @@ pipeline {
 //                                open-web-ui-deployment.yaml
 //                         kubectl apply --validate=false -f open-web-ui-deployment.yaml
 //                         kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
-
+//
 //                     '''
                     echo "Deployment file updated with credentials."
                 }
