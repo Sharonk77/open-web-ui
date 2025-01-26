@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = credentials('IMAGE_NAME')
 //         IMAGE_TAG = credentials('IMAGE_TAG')
-        IMAGE_TAG = 'sharonimagelala12'
+        IMAGE_TAG = 'sharonimagelala14'
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         ECR_REPO = credentials('ECR_REPO')
@@ -60,7 +60,7 @@ pipeline {
                             docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
                                 sh """
                                 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
-                                echo "Deploying to Kubernetes..."
+                                echo "pushed to ECR..."
 
                                 """
                             }
@@ -70,39 +70,43 @@ pipeline {
             }
         }
 
-        stage('Replace Variables in Deployment File') {
+        stage('deploying openwebui') {
             steps {
                 script {
                     sh '''
-                    kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
+                    echo "installing ngnix ingress controller"
+                    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+                    helm repo update
+                    helm install my-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+                    kubectl get all -n ingress-nginx
+                    echo "Cloning repository..."
+                    git clone https://github.com/Sharonk77/open-web-ui/
+                    cd open-web-ui
+                    echo "Current directory:" $(pwd)
+                    echo "executing sed command"
+                    sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
+                           -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
+                           -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
+                           -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
+                           open-web-ui-deployment.yaml
+                    kubectl apply --validate=false -f open-web-ui-deployment.yaml
+                    kubectl apply --validate=false -f openweb-service.yaml
+                    kubectl apply --validate=false -f ingress-resource.yaml
+
                     '''
-//                     sh '''
-//                         echo "Cloning repository..."
-//                         git clone https://github.com/Sharonk77/open-web-ui/
-//                         cd open-web-ui
-//                         echo "Current directory:" $(pwd)
-//                         sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
-//                                -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
-//                                -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
-//                                -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
-//                                open-web-ui-deployment.yaml
-//                         kubectl apply --validate=false -f open-web-ui-deployment.yaml
-//                         kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
-//
-//                     '''
-                    echo "Deployment file updated with credentials."
                 }
             }
         }
     }
 
+//                     kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
 
     post {
         success {
-            echo "Docker image successfully pushed to AWS ECR!"
+            echo "success"
         }
         failure {
-            echo "Failed to push Docker image to AWS ECR."
+            echo "Failed"
         }
     }
 }
