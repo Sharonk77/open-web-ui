@@ -69,8 +69,6 @@ pipeline {
                 script {
                     def deploymentFile = 'deployment.yaml'
 
-                    // Replace placeholders with Jenkins credentials securely
-                    withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
                         sh """
                             sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
                                    -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
@@ -82,31 +80,31 @@ pipeline {
                     }
                 }
             }
-        }
 
 
-stage('Deploy to Kubernetes from ECR') {
-    steps {
-        script {
-            withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
-                sh """
-                    echo "Logging in to AWS ECR..."
-                    aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
-                    echo "Creating Kubernetes secret for ECR authentication..."
-                    kubectl create secret docker-registry ecr-secret \
-                        --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
-                        --docker-username=AWS \
-                        --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
-                        --namespace default --dry-run=client -o yaml | kubectl apply -f -
+        stage('Deploy to Kubernetes from ECR') {
+            steps {
+                script {
+                    withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
+                        sh """
+                            echo "Logging in to AWS ECR..."
+                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
-                    echo "Deploying to Kubernetes..."
-                    kubectl apply -f open-web-ui-deployment.yaml
-                """
+                            echo "Creating Kubernetes secret for ECR authentication..."
+                            kubectl create secret docker-registry ecr-secret \
+                                --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
+                                --docker-username=AWS \
+                                --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
+                                --namespace default --dry-run=client -o yaml | kubectl apply -f -
+
+                            echo "Deploying to Kubernetes..."
+                            kubectl apply -f open-web-ui-deployment.yaml
+                        """
+                    }
+                }
             }
         }
-    }
-}
 
 
 
