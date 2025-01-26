@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = credentials('IMAGE_NAME')
+//         IMAGE_NAME = credentials('IMAGE_NAME')
+        IMAGE_NAME = sharonimagelala12
 //         IMAGE_TAG = credentials('IMAGE_TAG')
         IMAGE_TAG = 'v0.5.3'
         AWS_REGION = credentials('AWS_REGION')
