@@ -12,25 +12,25 @@ pipeline {
 
     stages {
 
-//         stage('Clean Workspace') {
-//             steps {
-//                 script {
-//                     deleteDir()
-//                 }
-//             }
-//         }
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    deleteDir()
+                }
+            }
+        }
 
-//         stage('Clone and Build Docker Image') {
-//             steps {
-//                 sh '''
-//                     echo "Cloning repository..."
-//                     git clone https://github.com/open-webui/open-webui
-//                     cd open-webui
-//                     echo "Building Docker image..."
-//                     docker build -t $IMAGE_NAME .
-//                 '''
-//             }
-//         }
+        stage('Clone and Build Docker Image') {
+            steps {
+                sh '''
+                    echo "Cloning repository..."
+                    git clone https://github.com/open-webui/open-webui
+                    cd open-webui
+                    echo "Building Docker image..."
+                    docker build -t $IMAGE_NAME .
+                '''
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
