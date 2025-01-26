@@ -25,8 +25,8 @@ pipeline {
                 sh '''
                     echo "Cloning repository..."
                     git clone https://github.com/open-webui/open-webui
-                    git checkout $IMAGE_TAG
                     cd open-webui
+                    git checkout $IMAGE_TAG
                     echo "Building Docker image..."
                     docker build -t $IMAGE_NAME:$IMAGE_TAG .
                 '''
