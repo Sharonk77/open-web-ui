@@ -22,9 +22,10 @@ pipeline {
 //
         stage('Clone and Build Docker Image') {
             steps {
+//              git clone https://github.com/open-webui/open-webui
                 sh '''
                     echo "Cloning repository..."
-//                     git clone https://github.com/open-webui/open-webui
+
                     cd open-webui
                     git checkout $IMAGE_TAG
                     echo "Building Docker image..."
@@ -73,20 +74,23 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "Cloning repository..."
+                    cd open-web-ui
+                    kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+//                     sh '''
+//                         echo "Cloning repository..."
 //                         git clone https://github.com/Sharonk77/open-web-ui/
-                        cd open-web-ui
+//                         cd open-web-ui
 //                         echo "Current directory:" $(pwd)
 //                         sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
 //                                -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
 //                                -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
 //                                -e "s#{{IMAGE_TAG}}#${IMAGE_TAG}#g" \
 //                                open-web-ui-deployment.yaml
-
 //                         kubectl apply --validate=false -f open-web-ui-deployment.yaml
-                        kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
+//                         kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
 
-                    '''
+//                     '''
                     echo "Deployment file updated with credentials."
                 }
             }
