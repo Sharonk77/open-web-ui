@@ -70,9 +70,8 @@ pipeline {
         stage('Replace Variables in Deployment File') {
             steps {
                 script {
-                    def deploymentFile = 'deployment.yaml'
-
                     sh """
+                        pwd
                         sed -i -e "s#{{AWS_ACCOUNT_ID}}#${AWS_ACCOUNT_ID}#g" \
                                -e "s#{{AWS_REGION}}#${AWS_REGION}#g"  \
                                -e "s#{{IMAGE_NAME}}#${IMAGE_NAME}#g" \
