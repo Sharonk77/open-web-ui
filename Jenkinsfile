@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-//         IMAGE_NAME = credentials('IMAGE_NAME')
-        IMAGE_NAME = 'sharonimagelala12'
+        IMAGE_NAME = credentials('IMAGE_NAME')
 //         IMAGE_TAG = credentials('IMAGE_TAG')
-        IMAGE_TAG = 'v0.5.3'
+        IMAGE_TAG = 'sharonimagelala12'
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         ECR_REPO = credentials('ECR_REPO')
@@ -28,7 +27,7 @@ pipeline {
                     echo "Cloning repository..."
                     git clone https://github.com/open-webui/open-webui
                     cd open-webui
-                    git checkout $IMAGE_TAG
+                    git checkout v0.5.3
                     echo "Building Docker image..."
                     docker build -t $IMAGE_NAME:$IMAGE_TAG .
                 '''
