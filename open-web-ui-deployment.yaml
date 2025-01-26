@@ -16,6 +16,7 @@ spec:
       containers:
         - name: openwebui
           image: {{AWS_ACCOUNT_ID}}.dkr.ecr.{{AWS_REGION}}.amazonaws.com/{{IMAGE_NAME}}:{{IMAGE_TAG}}
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 80
       imagePullSecrets:
