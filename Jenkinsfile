@@ -83,29 +83,27 @@ pipeline {
 
 
 
-        stage('Deploy to Kubernetes from ECR') {
+            stage('Deploy to Kubernetes from ECR') {
             steps {
                 script {
                     withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
-                        sh """
-                            echo "Logging in to AWS ECR..."
-                            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
+                            sh """
+                                echo "Creating Kubernetes secret for ECR authentication..."
+                                kubectl create secret docker-registry ecr-secret \
+                                    --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
+                                    --docker-username=AWS \
+                                    --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
+                                    --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
-                            echo "Creating Kubernetes secret for ECR authentication..."
-                            kubectl create secret docker-registry ecr-secret \
-                                --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
-                                --docker-username=AWS \
-                                --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
-                                --namespace default --dry-run=client -o yaml | kubectl apply -f -
-
-                            echo "Deploying to Kubernetes..."
-                            kubectl apply -f open-web-ui-deployment.yaml
-                        """
+                                echo "Deploying to Kubernetes..."
+                                kubectl apply -f open-web-ui-deployment.yaml
+                            """
+                        }
                     }
                 }
             }
         }
-
 
 
 //         stage('Build k8s from ECR image') {
@@ -123,7 +121,7 @@ pipeline {
 //                 }
 //             }
 //         }
-    }
+//     }
 
     post {
         success {
