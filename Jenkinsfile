@@ -47,22 +47,6 @@ pipeline {
 //                 }
 //             }
 //         }
-//
-//         stage('Push Docker Image to ECR') {
-//             steps {
-//                 script {
-//                     withCredentials([
-//                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
-//                     ]) {
-//                         withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
-//                             docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
-//                                 sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
 
         stage('Replace Variables in Deployment File') {
             steps {
@@ -81,22 +65,45 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes from ECR') {
+//         stage('Install AWS CLI if needed') {
+//             steps {
+//                 script {
+//                     sh '''
+//                         if ! command -v aws &> /dev/null
+//                         then
+//                             echo "AWS CLI not found, installing..."
+//                             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+//                             unzip awscliv2.zip
+//                             sudo ./aws/install
+//                         else
+//                             echo "AWS CLI already installed"
+//                         fi
+//                     '''
+//                 }
+//             }
+//         }
+
+        stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    withAWS(credentials: 'aws-jenkins-cred', region: "${AWS_REGION}") {
-                        docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
-                            sh """
-                                echo "Creating Kubernetes secret for ECR authentication..."
-                                kubectl create secret docker-registry ecr-secret \
-                                    --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
-                                    --docker-username=AWS \
-                                    --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
-                                    --namespace default --dry-run=client -o yaml | kubectl apply -f -
+                    withCredentials([
+                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
+                    ]) {
+                        withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
+                            docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
+                                sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}"
+                                sh '''
+                                    echo "Creating Kubernetes secret for ECR authentication..."
+                                    kubectl create secret docker-registry ecr-secret \
+                                        --docker-server=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com \
+                                        --docker-username=AWS \
+                                        --docker-password=\$(aws ecr get-login-password --region ${AWS_REGION}) \
+                                        --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
-                                echo "Deploying to Kubernetes..."
-                                kubectl apply -f open-web-ui-deployment.yaml
-                            """
+                                    echo "Deploying to Kubernetes..."
+                                    kubectl apply -f open-web-ui-deployment.yaml
+                                '''
+                            }
                         }
                     }
                 }
