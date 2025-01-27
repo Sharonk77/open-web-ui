@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = credentials('IMAGE_NAME')
 //         IMAGE_TAG = credentials('IMAGE_TAG')
-        IMAGE_TAG = 'sharonimagelala15'
+        IMAGE_TAG = 'sharonimagelala16'
         AWS_REGION = credentials('AWS_REGION')
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         ECR_REPO = credentials('ECR_REPO')
