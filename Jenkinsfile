@@ -80,7 +80,7 @@ pipeline {
                     cd open-web-ui
                     echo "Current directory:" $(pwd)
                     echo "executing sed command"
-                    kubectl set image deployment/openwebui openwebui=${IMAGE_NAME}:${IMAGE_TAG}
+                    kubectl set image deployment/openwebui openwebui=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
 
 
                     '''
