@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: openwebui
 spec:
-  replicas: 1  # Add replica count to define how many instances to run
+  replicas: 1
   selector:
     matchLabels:
       app: openwebui
@@ -18,6 +18,6 @@ spec:
           image: {{AWS_ACCOUNT_ID}}.dkr.ecr.{{AWS_REGION}}.amazonaws.com/{{IMAGE_NAME}}:{{IMAGE_TAG}}
           imagePullPolicy: "Always"
           ports:
-            - containerPort: 80
+            - containerPort: 8080
       imagePullSecrets:
         - name: ecr-secret
