@@ -19,7 +19,7 @@ pipeline {
 //                 }
 //             }
 //         }
-//
+
 //         stage('Clone and Build Docker Image') {
 //             steps {
 //
@@ -33,7 +33,7 @@ pipeline {
 //                 '''
 //             }
 //         }
-//
+
 //         stage('Tag Docker Image') {
 //             steps {
 //                 script {
@@ -49,26 +49,26 @@ pipeline {
 //                 }
 //             }
 //         }
-//
-//         stage('Push Docker Image to ECR') {
-//             steps {
-//                 script {
-//                     withCredentials([
-//                         string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
-//                     ]) {
-//                         withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
-//                             docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    withCredentials([
+                        string(credentialsId: 'ECR_REPO', variable: 'ECR_REPO')
+                    ]) {
+                        withAWS(credentials: 'aws-jenkins-cred', region: 'us-east-1') {
+                            docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:aws-jenkins-cred") {
 //                                 sh """
 //                                 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
 //                                 echo "pushed to ECR..."
 //
 //                                 """
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         stage('deploying openwebui') {
             steps {
