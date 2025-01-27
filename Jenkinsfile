@@ -73,9 +73,10 @@ pipeline {
         stage('deploying openwebui') {
             steps {
                 script {
+//                     echo "Cloning repository..."
+//                     git clone https://github.com/Sharonk77/open-web-ui/
                     sh '''
-                    echo "Cloning repository..."
-                    git clone https://github.com/Sharonk77/open-web-ui/
+
                     cd open-web-ui
                     echo "Current directory:" $(pwd)
                     echo "executing sed command"
